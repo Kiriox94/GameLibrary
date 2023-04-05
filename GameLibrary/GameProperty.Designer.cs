@@ -168,7 +168,7 @@ namespace GameLibrary
             // 
             this.steamGridDBPanel.Location = new System.Drawing.Point(9, 260);
             this.steamGridDBPanel.Name = "steamGridDBPanel";
-            this.steamGridDBPanel.Size = new System.Drawing.Size(350, 253);
+            this.steamGridDBPanel.Size = new System.Drawing.Size(345, 253);
             this.steamGridDBPanel.TabIndex = 10;
             // 
             // applyButton
@@ -219,7 +219,7 @@ namespace GameLibrary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(362, 551);
+            this.ClientSize = new System.Drawing.Size(360, 551);
             this.Controls.Add(this.resetIconButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.cancelButton);

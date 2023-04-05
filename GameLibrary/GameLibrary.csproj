@@ -166,6 +166,9 @@
     <PackageReference Include="craftersmine.SteamGridDB.Net">
       <Version>1.1.5</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
+    </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core">
       <Version>1.0.117</Version>
     </PackageReference>

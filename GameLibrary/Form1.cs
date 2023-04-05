@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using Microsoft.Win32;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
+using Newtonsoft.Json;
+using System.Net.Http;
 using System.Collections.Generic;
 
 namespace GameLibrary
@@ -16,10 +14,13 @@ namespace GameLibrary
     public partial class Form1 : Form
     {
         public static string _registryKeyPath = @"SOFTWARE\GameLibrary";
+        public static readonly Version actualVersion = new Version(1,1,0);
+
         public static bool useVerticalIcon = false;
         public static string sgdbApiKey;
 
         RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(_registryKeyPath);
+        private static readonly HttpClient client = new HttpClient();
 
         ToolTip toolTip1 = new ToolTip();
         DebugWindow debugWindow = new DebugWindow();
@@ -33,7 +34,7 @@ namespace GameLibrary
             debugWindow.Dispose();
         }
 
-        private void InitDataFile()
+        private async void InitDataFile()
         {
             DBManager.Init();
 
@@ -85,6 +86,16 @@ namespace GameLibrary
                 key.SetValue("SgdbApiKey", "");
                 key.Close();
             }
+
+            //try
+            //{
+            //    var responseString = await client.GetStringAsync("https://api.github.com/repos/kirito-94/GameLibrary/releases/latest");
+            //    Console.WriteLine(responseString);
+            //}
+            //catch (HttpRequestException ex)
+            //{
+            //     Console.WriteLine(ex.Message);
+            //}
         }
 
         public void LoadGame()
@@ -103,76 +114,99 @@ namespace GameLibrary
 
             foreach (string folderPath in folders)
             {
-                if (!Directory.Exists(folderPath))
+                CreateGameButton(folderPath);
+            }
+
+            if (!Directory.Exists(@"C:\ProgramData\Epic"))
+            {
+                string[] manifests = Directory.GetFiles(@"C:\ProgramData\Epic\EpicGamesLauncher\Data\Manifests");
+
+                foreach (string manifestPath in manifests)
                 {
-                    MessageBox.Show("Unable to find folder " + folderPath);
-                    return;
+                    using (StreamReader r = new StreamReader(manifestPath))
+                    {
+                        string json = r.ReadToEnd();
+
+                        dynamic array = JsonConvert.DeserializeObject(json);
+                        CreateGameButton(Convert.ToString(array.InstallLocation));
+                    }
+                }
+            }
+        }
+
+        void CreateGameButton(string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+            {
+                MessageBox.Show("Unable to find folder " + folderPath);
+                return;
+            }
+
+            FlowLayoutPanel panel = new FlowLayoutPanel();
+            Button button = new Button();
+            Label label = new Label();
+
+            panel.FlowDirection = FlowDirection.TopDown;
+            panel.Size = new Size(100, 180);
+            //panel.AutoSize = true;
+            //panel.BorderStyle = BorderStyle.FixedSingle;
+
+            string folderName = Path.GetFileName(folderPath);
+
+            if (DBManager.GetExeByFolder(folderName) != null)
+            {
+                if (DBManager.GetImageByFolder(folderName) != null)
+                {
+                    button.BackgroundImage = DBManager.GetImageByFolder(folderName);
+                }
+                else
+                {
+                    string filePath = Path.Combine(folderPath, DBManager.GetExeByFolder(folderName));
+
+                    Icon appIcon = Icon.ExtractAssociatedIcon(filePath);
+                    button.BackgroundImage = appIcon.ToBitmap();
                 }
 
-                FlowLayoutPanel panel = new FlowLayoutPanel();
-                Button button = new Button();
-                Label label = new Label();
+                button.ContextMenuStrip = createContextMenuStrip(folderPath, button);
+            }
+            else
+            {
+                button.BackgroundImage = Properties.Resources.question_mark;
+            }
 
-                panel.AutoSize = true;
-                panel.FlowDirection = FlowDirection.TopDown;
 
-                string folderName = Path.GetFileName(folderPath);
+            button.BackgroundImageLayout = ImageLayout.Zoom;
 
+            if (useVerticalIcon == true)
+            {
+                button.Size = new Size(80, 120);
+            }
+            else
+            {
+                button.Size = new Size(95, 95);
+            }
+
+            button.Click += (sender, e) =>
+            {
                 if (DBManager.GetExeByFolder(folderName) != null)
                 {
-                    if(DBManager.GetImageByFolder(folderName) != null)
-                    {
-                        button.BackgroundImage = DBManager.GetImageByFolder(folderName);
-                    }
-                    else
-                    {
-                        string filePath = Path.Combine(folderPath, DBManager.GetExeByFolder(folderName));
-                    
-                        Icon appIcon = Icon.ExtractAssociatedIcon(filePath);
-                        button.BackgroundImage = appIcon.ToBitmap();
-                    }
-
-                    button.ContextMenuStrip = createContextMenuStrip(folderPath, button);
+                    launchGame(folderPath);
                 }
                 else
                 {
-                    button.BackgroundImage = Properties.Resources.question_mark;
+                    ChangeGameDirectory(folderPath, button);
                 }
+            };
 
+            label.Text = folderName;
+            label.AutoSize = false;
+            label.Size = new Size(85, 50);
 
-                button.BackgroundImageLayout = ImageLayout.Zoom;
+            panel.Controls.Add(button);
+            panel.Controls.Add(label);
+            flowLayoutPanel1.Controls.Add(panel);
 
-                if(useVerticalIcon == true)
-                {
-                    button.Size = new Size(80, 120);
-                }
-                else
-                {
-                    button.Size = new Size(95, 95);
-                }
-
-                button.Click += (sender, e) =>
-                {
-                    if (DBManager.GetExeByFolder(folderName) != null)
-                    {
-                        launchGame(folderPath);
-                    }
-                    else
-                    {
-                        ChangeGameDirectory(folderPath, button);
-                    }
-                };
-
-                label.Text = folderName;
-                label.AutoSize = false;
-                label.Size = new Size(85, 100);
-
-                panel.Controls.Add(button);
-                panel.Controls.Add(label);
-                flowLayoutPanel1.Controls.Add(panel);
-
-                toolTip1.SetToolTip(button, folderName);
-            }
+            toolTip1.SetToolTip(button, folderName);
         }
 
         private async void launchGame(string folderPath)

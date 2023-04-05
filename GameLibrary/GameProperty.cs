@@ -177,7 +177,7 @@ namespace GameLibrary
             iconImageFlowLayout.AutoScroll = true;
 
             gridImageFlowLayout.Size = new Size(325, 190);
-            iconImageFlowLayout.Size = new Size(325, 190);
+            iconImageFlowLayout.Size = new Size(340, 190);
 
             gridTabPage.Text = "Grids";
             iconTabPage.Text = "Icons";
