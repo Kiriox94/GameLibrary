@@ -137,10 +137,11 @@
     <None Include="Resources\play-16.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\open.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
     <Content Include="icon.ico" />
+    <None Include="Resources\pencil.png" />
+    <EmbeddedResource Include="costura64\SQLite.Interop.dll" />
+    <EmbeddedResource Include="costura32\SQLite.Interop.dll" />
     <None Include="Resources\settings.png" />
     <None Include="Resources\settings.ico" />
   </ItemGroup>
@@ -157,6 +158,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Costura.Fody">
+      <Version>5.7.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="craftersmine.SteamGridDB.Net">
       <Version>1.1.5</Version>
     </PackageReference>
@@ -164,5 +170,6 @@
       <Version>1.0.117</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

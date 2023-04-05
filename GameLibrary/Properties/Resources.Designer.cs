@@ -63,9 +63,9 @@ namespace GameLibrary.Properties {
         /// <summary>
         ///   Recherche une ressource localisée de type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap open {
+        internal static System.Drawing.Bitmap pencil {
             get {
-                object obj = ResourceManager.GetObject("open", resourceCulture);
+                object obj = ResourceManager.GetObject("pencil", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

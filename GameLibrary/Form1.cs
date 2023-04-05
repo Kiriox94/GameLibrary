@@ -235,7 +235,7 @@ namespace GameLibrary
             editToolStripMenuItem.Text = "Edit";
 
             playToolStripMenuItem.Image = Properties.Resources.play;
-            editToolStripMenuItem.Image = Properties.Resources.open;
+            editToolStripMenuItem.Image = Properties.Resources.pencil;
 
             playToolStripMenuItem.Click += (sender, e) =>
             {
