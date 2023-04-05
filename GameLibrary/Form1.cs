@@ -86,16 +86,6 @@ namespace GameLibrary
                 key.SetValue("SgdbApiKey", "");
                 key.Close();
             }
-
-            //try
-            //{
-            //    var responseString = await client.GetStringAsync("https://api.github.com/repos/kirito-94/GameLibrary/releases/latest");
-            //    Console.WriteLine(responseString);
-            //}
-            //catch (HttpRequestException ex)
-            //{
-            //     Console.WriteLine(ex.Message);
-            //}
         }
 
         public void LoadGame()
@@ -148,8 +138,6 @@ namespace GameLibrary
 
             panel.FlowDirection = FlowDirection.TopDown;
             panel.Size = new Size(100, 180);
-            //panel.AutoSize = true;
-            //panel.BorderStyle = BorderStyle.FixedSingle;
 
             string folderName = Path.GetFileName(folderPath);
 
